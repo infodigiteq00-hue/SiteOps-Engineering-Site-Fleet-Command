@@ -9,12 +9,27 @@ export type InviteEmailPayload = {
   contactPhone?: string;
 };
 
+export function resolvePublicAppUrl(): string {
+  const fromEnv = (import.meta.env.VITE_PUBLIC_APP_URL as string | undefined)?.trim();
+  if (fromEnv) return fromEnv.replace(/\/+$/, "");
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin;
+  }
+  return "";
+}
+
+export function resolveSignupUrl(): string {
+  const appUrl = resolvePublicAppUrl();
+  return appUrl ? `${appUrl}/signup` : "/signup";
+}
+
 /** Public URL for the same icon as the app tab (dashboard HardHat tile). Use in EmailJS: <img src="{{logo_url}}" ... /> */
 export function resolvePublicLogoUrl(): string {
   const fromEnv = (import.meta.env.VITE_PUBLIC_LOGO_URL as string | undefined)?.trim();
   if (fromEnv) return fromEnv;
-  if (typeof window !== "undefined" && window.location?.origin) {
-    return `${window.location.origin}/favicon.svg`;
+  const appUrl = resolvePublicAppUrl();
+  if (appUrl) {
+    return `${appUrl}/favicon.svg`;
   }
   return "";
 }

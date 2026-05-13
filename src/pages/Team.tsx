@@ -11,7 +11,7 @@ import {
   useCompanyNameMap,
 } from "@/hooks/useOperationalData";
 import { parsePlatformRole } from "@/lib/profileRole";
-import { isEmailJsConfigured, sendInviteEmail } from "@/lib/sendInviteEmail";
+import { isEmailJsConfigured, resolveSignupUrl, sendInviteEmail } from "@/lib/sendInviteEmail";
 import { useScopedSites } from "@/hooks/useCompanyScope";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -224,14 +224,13 @@ const Team = () => {
     }
 
     if (isEmailJsConfigured()) {
-      const origin = window.location.origin;
       try {
         await sendInviteEmail({
           toEmail: inviteEmail.trim().toLowerCase(),
           toName: inviteName.trim(),
           companyName: formatCompanyLabel(user.companyId, companyNames) || "Your organisation",
           roleLabel: ROLE_LABELS[inviteRole],
-          signupUrl: `${origin}/signup`,
+          signupUrl: resolveSignupUrl(),
         });
       } catch (e) {
         toast({

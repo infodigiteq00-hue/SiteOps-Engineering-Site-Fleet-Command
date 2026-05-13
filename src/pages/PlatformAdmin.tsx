@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ROLE_LABELS, initialsFromName, useCurrentUser } from "@/lib/session";
 import { supabase } from "@/lib/supabaseClient";
 import { isSupabaseConfigured } from "@/lib/supabaseClient";
-import { isEmailJsConfigured, sendInviteEmail } from "@/lib/sendInviteEmail";
+import { isEmailJsConfigured, resolveSignupUrl, sendInviteEmail } from "@/lib/sendInviteEmail";
 import { StatCard } from "@/components/StatCard";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -354,7 +354,7 @@ const PlatformAdmin = () => {
             toName: adminNameTrim,
             companyName: coName,
             roleLabel: ROLE_LABELS.firm_admin,
-            signupUrl: `${window.location.origin}/signup`,
+            signupUrl: resolveSignupUrl(),
             contactPhone: adminPhoneTrim ?? undefined,
           });
         } catch (e) {
@@ -403,7 +403,7 @@ const PlatformAdmin = () => {
             toName: adminNameTrim,
             companyName: coName,
             roleLabel: ROLE_LABELS.firm_admin,
-            signupUrl: `${window.location.origin}/signup`,
+            signupUrl: resolveSignupUrl(),
             contactPhone: adminPhoneTrim ?? undefined,
           });
         } catch (e) {
@@ -457,15 +457,13 @@ const PlatformAdmin = () => {
     }
 
     if (isEmailJsConfigured()) {
-      const origin = window.location.origin;
-      const signupUrl = `${origin}/signup`;
       try {
         await sendInviteEmail({
           toEmail: email,
           toName: name,
           companyName: coName,
           roleLabel: ROLE_LABELS.firm_admin,
-          signupUrl,
+          signupUrl: resolveSignupUrl(),
           contactPhone: phone || undefined,
         });
       } catch (e) {

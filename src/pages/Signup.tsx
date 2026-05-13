@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { HardHat } from "lucide-react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { resolvePublicAppUrl } from "@/lib/sendInviteEmail";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,12 +36,12 @@ const Signup = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const origin = window.location.origin;
+    const appUrl = resolvePublicAppUrl();
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: {
-        emailRedirectTo: `${origin}/`,
+        emailRedirectTo: `${appUrl}/`,
         data: { full_name: fullName.trim() },
       },
     });

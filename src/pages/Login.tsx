@@ -3,6 +3,7 @@ import { Navigate, useLocation, useSearchParams } from "react-router-dom";
 import { ArrowRight, HardHat, MapPinned, ShieldCheck, Sparkles, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { resolvePublicAppUrl } from "@/lib/sendInviteEmail";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -104,12 +105,12 @@ const Login = () => {
   const onSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSignupSubmitting(true);
-    const origin = window.location.origin;
+    const appUrl = resolvePublicAppUrl();
     const { data, error } = await supabase.auth.signUp({
       email: signupEmail.trim(),
       password: signupPassword,
       options: {
-        emailRedirectTo: `${origin}/`,
+        emailRedirectTo: `${appUrl}/`,
         data: { full_name: fullName.trim() },
       },
     });
@@ -136,9 +137,9 @@ const Login = () => {
       return;
     }
     setForgotSubmitting(true);
-    const origin = window.location.origin;
+    const appUrl = resolvePublicAppUrl();
     const { error } = await supabase.auth.resetPasswordForEmail(trimmed, {
-      redirectTo: `${origin}/reset-password`,
+      redirectTo: `${appUrl}/reset-password`,
     });
     setForgotSubmitting(false);
     if (error) {
